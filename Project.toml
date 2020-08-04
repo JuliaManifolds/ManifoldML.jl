@@ -1,0 +1,4 @@
+name = "ManifoldML"
+uuid = "d6631129-f986-45fb-a961-b611c52969b4"
+authors = ["Ronny Bergmann <manopt@ronnybergmann.net>"]
+version = "0.1.0"
