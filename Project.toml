@@ -2,3 +2,6 @@ name = "ManifoldML"
 uuid = "d6631129-f986-45fb-a961-b611c52969b4"
 authors = ["Ronny Bergmann <manopt@ronnybergmann.net>"]
 version = "0.1.0"
+
+[deps]
+ManifoldsBase = "3362f125-f0bb-47a3-aa74-596ffd7ef2fb"
