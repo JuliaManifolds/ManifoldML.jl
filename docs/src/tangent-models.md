@@ -16,7 +16,6 @@ coords_red = reduce(hcat, coords)
 z = zeros(manifold_dimension(M)))
 model = fit(PCA, coords_red; maxoutdim=1, mean=z)
 X = get_vector(M, m, reconstruct(model, [1.0]), basis)
-geodesic(M, m, X, range(-1.0, 1.0, length=101))
 ```
 
 The code performs the following steps:
@@ -29,6 +28,5 @@ The code performs the following steps:
   6. Transforming a vector of vectors of coordinates into a matrix `coords_red`.
   7. Fitting an ordinary PCA model to the matrix `coords_red`. Zero mean chosen, and the first principal direction is to be computed (the `maxoutdim` argument).
   8. The first principal component is converted into a tangent vector `X`.
-  9. A geodesic on `M` along that direction is computed.
 
 The same general procedure can be applied to other tangent space models by replacing steps 7 and 8.
