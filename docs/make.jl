@@ -7,7 +7,9 @@ makedocs(
     sitename = "ManifoldML.jl",
     pages = [
         "Home" => "index.md",
-        "K means" => "kmeans.md"
+        "K means" => "kmeans.md",
+        "K Nearest Neighbors" => "knn.md",
+        "Tangent space models" => "tangent-models.md",
     ],
 )
 

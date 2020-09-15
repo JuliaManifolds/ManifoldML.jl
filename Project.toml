@@ -8,6 +8,7 @@ Manifolds = "1cead3c2-87b3-11e9-0ccd-23c62b72b94e"
 ManifoldsBase = "3362f125-f0bb-47a3-aa74-596ffd7ef2fb"
 Manopt = "0fc0a36d-df90-57f3-8f93-d78a9fc72bb5"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 
 [compat]
 Manifolds = "0.3"
@@ -16,7 +17,9 @@ Manopt = "0.2"
 julia = "1.0"
 
 [extras]
+Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
+MultivariateStats = "6f286f6a-111f-5878-ab1e-185364afe411"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test"]
+test = ["Distances", "MultivariateStats", "Test"]
