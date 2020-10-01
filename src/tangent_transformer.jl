@@ -39,10 +39,15 @@ function MLJBase.fit(transformer::TangentSpaceTransformer, verbosity::Int, X)
     feature_scitypes = collect(elscitype(selectcols(X, c)) for c in all_features)
     if isempty(transformer.features)
         cols_to_fit = filter!(eachindex(all_features) |> collect) do j
-            return feature_scitypes[j] <: ManifoldPoint
+            return feature_scitypes[j] <: MLJScientificTypes.ManifoldPoint
         end
     else
-        error("TODO")
+        issubset(transformer.features, all_features) ||
+            @warn "Some specified features not present in table to be fit. "
+        cols_to_fit = filter!(eachindex(all_features) |> collect) do j
+            return (all_features[j] in transformer.features) &&
+                feature_scitypes[j] <: MLJScientificTypes.ManifoldPoint
+        end
     end
     fitresult_given_feature = Dict{Symbol,Any}()
 
@@ -79,7 +84,7 @@ end
 
 # for transforming vector:
 function MLJBase.transform(transformer::TangentSpaceTransformer, fitresult, ps)
-    return [transform(transformer, fitresult, p) for p in ps]
+    return [MLJBase.transform(transformer, fitresult, p) for p in ps]
 end
 
 # for single values:
@@ -92,5 +97,5 @@ end
 
 # for vectors:
 function MLJBase.inverse_transform(transformer::TangentSpaceTransformer, fitresult, w::AbstractVector)
-    return [inverse_transform(transformer, fitresult, y) for y in w]
+    return [MLJBase.inverse_transform(transformer, fitresult, y) for y in w]
 end

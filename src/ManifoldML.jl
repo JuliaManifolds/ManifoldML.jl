@@ -5,8 +5,11 @@ import Manopt: initialize_solver!, step_solver!
 using Manifolds: mean
 using MLJBase
 using MLJModelInterface
+using MLJScientificTypes
 
 using Requires
+
+using Tables # needed for MLJ
 
 include("kmeans.jl")
 include("tangent_transformer.jl")
