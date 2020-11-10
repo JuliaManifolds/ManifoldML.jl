@@ -12,5 +12,16 @@ using DataFrames
     X = DataFrame(pm = [(p1, M), (p2, M), (p3, M)], y = [1, 2, 1])
 
     tst_model = ManifoldML.TangentSpaceTransformer(:mean, ExponentialRetraction(), LogarithmicInverseRetraction(), [:pm])
-    transformed = MLJBase.transform(fit!(machine(tst_model, X)), X)
+    fitted_model = fit!(machine(tst_model, X))
+    transformed = MLJBase.transform(fitted_model, X)
+    @test schema(transformed).names == (:pm_1, :pm_2, :y)
+    @test schema(transformed).types == (Float64, Float64, Int64)
+    @test schema(transformed).scitypes == (Continuous, Continuous, Count)
+    pm = mean(M, [p1, p2, p3])
+    logs = map(y -> get_coordinates(M, pm, log(M, pm, y), DefaultOrthogonalBasis()), [p1, p2, p3])
+    for i in 1:2
+        @test transformed[Symbol("pm_$i")] == map(y -> y[i], logs)
+    end
+
+    #inv_transformed = MLJBase.inverse_transform(fitted_model, transformed)
 end

@@ -125,7 +125,6 @@ function MLJBase.transform(transformer::TangentSpaceTransformer, fitresult, ps)
             feature_names = [Symbol("$(ftr)_$i") for i in 1:manifold_dimension(M)]
             append!(new_features, feature_names)
             cols = univariate_to_tspace_transform(M, fgf[1], fgf[3], ftr_data, transformer.inverse_retraction)
-            println("ff ", ftr, " ", cols)
             append!(new_cols, cols)
         else
             push!(new_features, ftr)
@@ -133,12 +132,32 @@ function MLJBase.transform(transformer::TangentSpaceTransformer, fitresult, ps)
         end
     end
 
-    println("DDD", new_features)
-    println("FFF", new_cols)
     named_cols = NamedTuple{tuple(new_features...)}(tuple(new_cols...))
 
     return MLJBase.table(named_cols, prototype=ps)
 end
+
+function MLJBase.inverse_transform(transformer::TangentSpaceTransformer, fitresult, X)
+    is_univariate = fitresult.is_univariate
+
+    if is_univariate
+        return inverse_transform(transformer, fitresult.fitresult, X)
+    end
+
+    features_transformed = keys(fitresult.fitresult_given_feature)
+
+    all_features = Tables.schema(ps).names
+
+    new_features = Symbol[]
+    new_cols = []
+
+
+
+    named_cols = NamedTuple{tuple(new_features...)}(tuple(new_cols...))
+
+    return MLJBase.table(named_cols, prototype=ps)
+end
+
 
 # for single values:
 function MLJBase.inverse_transform(transformer::UnivariateTangentSpaceTransformer, fitresult, coeffs)
