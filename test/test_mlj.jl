@@ -11,6 +11,6 @@ using DataFrames
 
     X = DataFrame(pm = [(p1, M), (p2, M), (p3, M)], y = [1, 2, 1])
 
-    tst_model = ManifoldML.TangentSpaceTransformer(:mean, [:pm])
-    MLJBase.transform(fit!(machine(tst_model, X)), X)
+    tst_model = ManifoldML.TangentSpaceTransformer(:mean, ExponentialRetraction(), LogarithmicInverseRetraction(), [:pm])
+    transformed = MLJBase.transform(fit!(machine(tst_model, X)), X)
 end
