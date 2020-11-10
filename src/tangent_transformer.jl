@@ -43,6 +43,12 @@ function univariate_to_tspace_transform(M::Manifold, p, basis, data, inverse_ret
     return map(i -> map(u -> inv_retrs[u][i], 1:length(inv_retrs)), 1:manifold_dimension(M))
 end
 
+function univariate_to_tspace_inverse_transform(M::Manifold, p, basis, data, retraction::AbstractRetractionMethod)
+    arr_data = Array(data)
+    retrs = map(i -> retract(M, p, get_vector(M, p, arr_data[i,:], basis), retraction), axes(arr_data, 1))
+    return map(u -> (u, M), retrs)
+end
+
 function MLJBase.fit(transformer::TangentSpaceTransformer, verbosity::Int, X)
     is_univariate = !Tables.istable(X)
 
@@ -145,17 +151,38 @@ function MLJBase.inverse_transform(transformer::TangentSpaceTransformer, fitresu
     end
 
     features_transformed = keys(fitresult.fitresult_given_feature)
+    features_processed = Symbol[]
 
-    all_features = Tables.schema(ps).names
+    all_features = Tables.schema(X).names
 
     new_features = Symbol[]
     new_cols = []
 
-
-
+    for ftr in all_features
+        sftc = string(ftr)
+        last_underscore = findlast('_', sftc)
+        prefix = last_underscore === nothing ? ftr : Symbol(sftc[1:(last_underscore-1)])
+        if prefix in features_transformed
+            if prefix in features_processed
+                continue
+            end
+            fgf = fitresult.fitresult_given_feature[prefix]
+            M = fgf[2]
+            feature_names = [Symbol("$(prefix)_$i") for i in 1:manifold_dimension(M)]
+            push!(new_features, prefix)
+            ftr_data = selectcols(X, feature_names)
+            new_col = univariate_to_tspace_inverse_transform(M, fgf[1], fgf[3], ftr_data, transformer.retraction)
+            push!(new_cols, new_col)
+            push!(features_processed, prefix)
+        else
+            ftr_data = selectcols(X, ftr)
+            push!(new_features, ftr)
+            push!(new_cols, ftr_data)
+        end
+    end
     named_cols = NamedTuple{tuple(new_features...)}(tuple(new_cols...))
 
-    return MLJBase.table(named_cols, prototype=ps)
+    return MLJBase.table(named_cols, prototype=X)
 end
 
 

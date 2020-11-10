@@ -7,7 +7,7 @@ using DataFrames
     M = Sphere(2)
     p1 = [1.0, 0.0, 0.0]
     p2 = [0.0, 1.0, 0.0]
-    p3 = [0.0, sqrt(2), -sqrt(2)]
+    p3 = [0.0, sqrt(2)/2, -sqrt(2)/2]
 
     X = DataFrame(pm = [(p1, M), (p2, M), (p3, M)], y = [1, 2, 1])
 
@@ -23,5 +23,7 @@ using DataFrames
         @test transformed[Symbol("pm_$i")] == map(y -> y[i], logs)
     end
 
-    #inv_transformed = MLJBase.inverse_transform(fitted_model, transformed)
+    inv_transformed = MLJBase.inverse_transform(fitted_model, transformed)
+    @test schema(inv_transformed) == schema(X)
+    @test isapprox(map(p -> p[1], X[:pm]), map(p -> p[1], inv_transformed[:pm]))
 end
