@@ -12,7 +12,8 @@ Random.seed!(42)
         A(π / 6) * [1.0 0.0 0.0; 0.0 2.0 0.0; 0.0 0.0 1] * transpose(A(π / 6)),
     ]
     dist = ManifoldML.RiemannianDistance(M)
-    @test evaluate(dist, reshape(ptsF[1], 9), reshape(ptsF[3], 9)) ≈ distance(M, ptsF[1], ptsF[3])
+    @test Distances.evaluate(dist, reshape(ptsF[1], 9), reshape(ptsF[3], 9)) ≈
+          distance(M, ptsF[1], ptsF[3])
 
     point_matrix = reduce(hcat, map(a -> reshape(a, 9), ptsF))
     dists = pairwise(dist, point_matrix)
